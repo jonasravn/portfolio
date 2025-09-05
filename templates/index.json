@@ -14,7 +14,7 @@
       "name": "Hero Banner",
       "settings": {
         "background_type": "image",
-        "background_image": "shopify://shop_images/birkravn-background.png",
+        "background_image": "shopify://shop_images/birkravn-grainy-bg.png",
         "background_color": "#f5f5f5",
         "enable_text_overlay": true,
         "overlay_text": "<h1>birkravn</h1>\n<h6>freelance shopify developer</h6>",
