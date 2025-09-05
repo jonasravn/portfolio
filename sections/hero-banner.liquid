@@ -1,0 +1,569 @@
+{% assign background_type = section.settings.background_type %}
+
+{% assign has_image = false %}
+{% assign has_video = false %}
+{% assign has_color = false %}
+
+{% if background_type == 'image' and section.settings.background_image != blank %}
+  {% assign has_image = true %}
+{% endif %}
+
+{% if background_type == 'video' and section.settings.background_video != blank %}
+  {% assign has_video = true %}
+{% endif %}
+
+{% if background_type == 'color' %}
+  {% assign has_color = true %}
+{% endif %}
+
+{% if section.settings.enable_text_overlay and section.settings.overlay_text != blank %}
+  {% assign has_overlay = true %}
+{% else %}
+  {% assign has_overlay = false %}
+{% endif %}
+
+<div
+  class="hero-banner color-{{ section.settings.color_scheme }}{% if has_overlay %} hero-banner--has-overlay{% endif %}"
+  id="HeroBanner-{{ section.id }}"
+  style="
+    --hero-banner-min-height: {{ section.settings.section_height }};
+    {% if has_color %}
+      --hero-banner-bg-color: {{ section.settings.background_color }};
+    {% endif %}
+  "
+  {% if request.visual_preview_mode %}
+    data-shopify-visual-preview
+  {% endif %}
+>
+  {% comment %} Background Layer {% endcomment %}
+  <div class="hero-banner__background">
+    {% if has_image %}
+      {{
+        section.settings.background_image
+        | image_url: width: 3840
+        | image_tag:
+          width: section.settings.background_image.width,
+          widths: '832, 1200, 1600, 1920, 2560, 3840',
+          height: section.settings.background_image.height,
+          alt: section.settings.background_image.alt,
+          class: 'hero-banner__background-image',
+          sizes: '100vw'
+      }}
+    {% endif %}
+
+    {% if has_video %}
+      <div class="hero-banner__video-wrapper">
+        {%- if section.settings.background_video.preview_image -%}
+          {{
+            section.settings.background_video.preview_image
+            | image_url: width: 3840
+            | image_tag:
+              width: section.settings.background_video.preview_image.width,
+              widths: '832, 1200, 1600, 1920, 2560, 3840',
+              height: section.settings.background_video.preview_image.height,
+              alt: section.settings.background_video.alt,
+              class: 'hero-banner__video-poster',
+              sizes: '100vw'
+          }}
+        {%- endif -%}
+        {{
+          section.settings.background_video
+          | video_tag:
+            poster: nil,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: 'hero-banner__background-video'
+        }}
+      </div>
+    {% endif %}
+  </div>
+
+  {% comment %} Overlay Layer {% endcomment %}
+  {% if has_overlay %}
+    <div class="hero-banner__overlay">
+      <div class="hero-banner__overlay-content">
+        <div class="hero-banner__overlay-text {{ section.settings.overlay_text_size }}">
+          {{ section.settings.overlay_text }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %} Content Layer {% endcomment %}
+  <div class="hero-banner__content section section--{{ section.settings.section_width }} spacing-style">
+    <div class="hero-banner__content-wrapper">
+    <div class="hero-banner__content-text">
+        <div class="hero-banner__content-text-title">
+        <h2>Jonas Birk Ravn</h2>
+        <h3>Located in Aarhus//Denmark</h3>
+        </div>
+    <div class="hero-banner__content-text-subtitle">
+        <h6>+7 years of Shopify experience</h6>
+        </div>
+    </div>
+    <div class="hero-banner__content-info">
+        <div class="hero-banner__content-info-item">
+            <a href="mailto:jonas@birkravn.dk">
+                <h6 class="birkravn-pulse">E-mail</h6>
+            </a>
+        </div>
+        <div class="hero-banner__content-info-item">
+            <a href="https://www.linkedin.com/in/jonasbirkravn/" target="_blank">
+            <h6 class="birkravn-pulse">LinkedIn</h6>
+            </a>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.hero-banner__content-wrapper {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #fff;
+    display: flex;
+}
+.hero-banner__content-text {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #fff;
+    border-right: none;
+}
+.hero-banner__content-info {
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    text-transform: lowercase;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.hero-banner__content-info::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #000;
+}
+
+.hero-banner__content-info h6 {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+.hero-banner__content-text h1,
+.hero-banner__content-text h2,
+.hero-banner__content-text h3,
+.hero-banner__content-text h4,
+.hero-banner__content-text h5,
+.hero-banner__content-text h6 {
+    font-size: 14px;
+    text-transform: lowercase;
+    margin-bottom: 0;
+    margin-top: 0;
+    line-height: 1.5;
+}
+.hero-banner__content-text h3 {
+    opacity: 0.5;
+}
+  .hero-banner {
+    position: relative;
+    min-height: var(--hero-banner-min-height);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-banner__background {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hero-banner__background-image,
+  .hero-banner__background-video,
+  .hero-banner__video-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-banner__video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-banner__background-video {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-banner__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-banner__overlay-content {
+    text-align: center;
+    max-width: 80%;
+  }
+
+  .hero-banner__overlay-text {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-banner__overlay-text--small {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .hero-banner__overlay-text--medium {
+    font-size: 3rem;
+    line-height: 1.1;
+  }
+
+  .hero-banner__overlay-text--large {
+    font-size: 4rem;
+    line-height: 1;
+  }
+
+  @media screen and (min-width: 750px) {
+    .hero-banner__overlay-text--small {
+      font-size: 3rem;
+    }
+
+    .hero-banner__overlay-text--medium {
+      font-size: 4rem;
+    }
+
+    .hero-banner__overlay-text--large {
+      font-size: 6rem;
+    }
+  }
+
+  .hero-banner__content {
+    position: relative;
+    z-index: 3;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-banner--has-overlay .hero-banner__content {
+    justify-content: flex-end;
+    padding-bottom: 2rem;
+  }
+
+  .hero-banner__background {
+    pointer-events: none;
+  }
+
+  .hero-banner[data-shopify-visual-preview] {
+    min-height: 400px;
+  }
+  .hero-banner__overlay-text h1 {
+    margin-bottom: 0;
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero-banner__overlay-text h1::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    animation: stylish-line-slide 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+
+  .hero-banner__overlay-text h1::before {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: stylish-line-slide 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 0.8s;
+    filter: blur(1px);
+  }
+
+  @keyframes stylish-line-slide {
+    0% {
+      transform: translateX(-100%) scaleX(0);
+      opacity: 0;
+    }
+    10% {
+      transform: translateX(-50%) scaleX(0.5);
+      opacity: 0.7;
+    }
+    20% {
+      transform: translateX(0%) scaleX(1);
+      opacity: 1;
+    }
+    30% {
+      transform: translateX(25%) scaleX(0.8);
+      opacity: 0.8;
+    }
+    40% {
+      transform: translateX(50%) scaleX(0.6);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateX(75%) scaleX(0.4);
+      opacity: 0.4;
+    }
+    60% {
+      transform: translateX(100%) scaleX(0.2);
+      opacity: 0.2;
+    }
+    70% {
+      transform: translateX(125%) scaleX(0.1);
+      opacity: 0.1;
+    }
+    80% {
+      transform: translateX(150%) scaleX(0);
+      opacity: 0;
+    }
+    90% {
+      transform: translateX(-50%) scaleX(0);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(-100%) scaleX(0);
+      opacity: 0;
+    }
+  }
+  .hero-banner__overlay-text h6 {
+    margin-top: 5px;
+  }
+
+  /* Pulse animation for birkravn-pulse class */
+  @keyframes birkravn-pulse {
+    0%, 100% {
+      color: #fff;
+    }
+    50% {
+      color: #000;
+    }
+  }
+
+  .birkravn-pulse {
+    transition: color 0.25s ease;
+    cursor: pointer;
+  }
+
+  .birkravn-pulse:hover {
+    animation: birkravn-pulse 0.5s ease-in-out infinite;
+  }
+
+  @media screen and (max-width: 750px) {
+    .hero-banner__content-wrapper {
+        left: 20px;
+        right: 20px;
+        justify-content: center;
+    }
+  }
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "tag": "section",
+  "class": "hero-banner-wrapper section-wrapper",
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Background type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        },
+        {
+          "value": "color",
+          "label": "Color"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image",
+      "visible_if": "{{ section.settings.background_type == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "background_video",
+      "label": "Background video",
+      "visible_if": "{{ section.settings.background_type == 'video' }}"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f5f5",
+      "visible_if": "{{ section.settings.background_type == 'color' }}"
+    },
+    {
+      "type": "header",
+      "content": "Text Overlay"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_text_overlay",
+      "label": "Enable text overlay",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "overlay_text",
+      "label": "Overlay text",
+      "visible_if": "{{ section.settings.enable_text_overlay }}",
+      "default": "<h1>Your text here</h1>"
+    },
+    {
+      "type": "select",
+      "id": "overlay_text_size",
+      "label": "Text size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "large",
+      "visible_if": "{{ section.settings.enable_text_overlay }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "Section height",
+      "options": [
+        {
+          "value": "300px",
+          "label": "Small"
+        },
+        {
+          "value": "500px",
+          "label": "Medium"
+        },
+        {
+          "value": "700px",
+          "label": "Large"
+        },
+        {
+          "value": "100vh",
+          "label": "Full screen"
+        }
+      ],
+      "default": "500px"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Content width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "Page width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full width"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner",
+      "category": "Banners",
+      "settings": {
+        "background_type": "image",
+        "section_height": "500px",
+        "enable_text_overlay": true,
+        "overlay_text": "<h1>Your Hero Text</h1>",
+        "color_scheme": "scheme-1"
+      }
+    }
+  ]
+}
+{% endschema %}
